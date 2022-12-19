@@ -9,11 +9,11 @@ using namespace std;
 int main() {
     int N, x, y;
     cin >> N >> x >> y;
-    vector<vector<int>> X(N + 1);
-    vector<vector<int>> Y(N + 1);
+    vector<vector<bool>> dpX(N + 1, vector<bool>(2 * 10000 + 1, false));
+    vector<vector<bool>> dpY(N + 1, vector<bool>(2 * 10000 + 1, false));
     int ang = 1;
-    X.at(0).push_back(0);
-    Y.at(0).push_back(0);
+    dpX[0][10000] = true;
+    dpY[0][10000] = true;
     
     rep(i, N) {
         int a;
@@ -21,43 +21,35 @@ int main() {
         switch (ang)
         {
         case 1:
-            Y.at(i + 1) = Y.at(i);
-            for (auto m : X.at(i))  {
-                X.at(i + 1).push_back(m + a);
-                
-                if (i > 0) {
-                    X.at(i + 1).push_back(m - a);
+            dpY[i + 1] = dpY[i];
+            rep(j, 2 * 10000 + 1) {
+                if (dpX[i][j] == true) {
+                    dpX[i + 1][j + a] = true;
+                    if (i > 0) {
+                        dpX[i + 1][j - a] = true;
+                    }
                 }
             }
             break;
 
         case -1:
-            X.at(i + 1) = X.at(i);
-            for (auto n : Y.at(i)) {
-                Y.at(i + 1).push_back(n + a);
-                Y.at(i + 1).push_back(n - a);
+            dpX[i + 1] = dpX[i];
+            rep(j, 2 * 10000 + 1) {
+                if (dpY[i][j] == true) {
+                    dpY[i + 1][j + a] = true;
+                    dpY[i + 1][j - a] = true;
+                }
             }
+            break;
+            
         }
 
         ang *= -1;
         
     }
-    bool flg1 = false, flg2 = false;
-    for (auto u : X.at(N)) {
-        if (u == x) {
-            flg1 = true;
-            break;
-        }
-    }
+    
 
-    for (auto v : Y.at(N)) {
-        if (v == y) {
-            flg2 = true;
-            break;
-        }
-    }
-
-    if (flg1 && flg2) {
+    if (dpX[N][10000 + x] && dpY[N][10000 + y]) {
         cout << "Yes" << endl;
     } else {
         cout << "No" << endl;
