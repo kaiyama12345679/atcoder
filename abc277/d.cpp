@@ -59,6 +59,9 @@ int main() {
         j = (j + 1) % M;
     }
 
+    
+    long long ans = 0;
+    chmax(ans, sum - loss);
 
-    cout << sum - loss << endl;
+    cout << ans << endl;
 }
